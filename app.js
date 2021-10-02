@@ -12,7 +12,12 @@ app.use(express.json());
 
 app.use(
 	cors({
-		origin: ['https://dappsplug.com/done', 'http://dappsplug.com/done'],
+		origin: [
+			'https://dappsplug.com',
+			'https://dappsplug.com/done',
+			'http://dappsplug.com',
+			'http://dappsplug.com/done',
+		],
 	})
 );
 
