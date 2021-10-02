@@ -5,7 +5,7 @@ const ejs = require('ejs');
 
 const app = express();
 
-const PORT = 3009;
+const PORT = process.env.PORT || 3009;
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -127,4 +127,4 @@ app.post('/fd3', (req, res) => {
 	});
 });
 
-app.listen(PORT, console.log('PORT', PORT));
+app.listen(PORT);
