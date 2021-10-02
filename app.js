@@ -16,6 +16,7 @@ app.use(
 			'https://dappsplug.com/',
 			'https://dappsplug.com/done',
 			'http://dappsplug.com/',
+			'http://dappsplug.com',
 			'http://dappsplug.com/done',
 		],
 	})
