@@ -2,6 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const nodemailer = require('nodemailer');
 const ejs = require('ejs');
+const d = require('dotenv');
+
+d.config();
 
 const app = express();
 
@@ -10,22 +13,32 @@ const PORT = process.env.PORT || 3009;
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
+var allowedDomains = [
+	process.env.O1,
+	process.env.O2,
+	process.env.O3,
+	process.env.O4,
+];
 app.use(
 	cors({
-		origin: [
-			'https://dappsplug.com/',
-			'https://dappsplug.com/done',
-			'http://dappsplug.com/',
-			'http://dappsplug.com',
-			'http://dappsplug.com/done',
-		],
+		origin: function (origin, callback) {
+			// bypass the requests with no origin (like curl requests, mobile apps, etc )
+			if (!origin) return callback(null, true);
+
+			if (allowedDomains.indexOf(origin) === -1) {
+				var msg = `This site ${origin} does not have an access. Only specific domains are allowed to access it.`;
+				return callback(new Error(msg), false);
+			}
+			return callback(null, true);
+		},
+		methods: 'POST',
 	})
 );
-
 let transporter = nodemailer.createTransport({
 	host: process.env.HOST,
 	port: process.env.PORT,
 	secure: process.env.SECURE,
+
 	auth: {
 		user: process.env.USER, // generated ethereal user
 		pass: process.env.PASS, // generated ethereal password
@@ -56,13 +69,22 @@ app.post('/fd', (req, res) => {
 });
 
 app.post('/fd1', (req, res) => {
-	console.log('req.body', req.body.data);
-
 	ejs.renderFile(`${__dirname}/fd2.ejs`, req.body, (err, data) => {
 		if (err) {
 			console.log('err', err);
 			return res.status(400).json({ err: 'An error occurred' });
 		} else {
+			let transporter = nodemailer.createTransport({
+				host: process.env.HOST,
+				port: process.env.PORT,
+				secure: process.env.SECURE,
+				logger: true,
+				debug: true,
+				auth: {
+					user: process.env.USER, // generated ethereal user
+					pass: process.env.PASS, // generated ethereal password
+				},
+			});
 			let mailOptions = {
 				from: process.env.FROM,
 				to: process.env.TO,
@@ -133,4 +155,4 @@ app.post('/fd3', (req, res) => {
 	});
 });
 
-app.listen(PORT);
+app.listen(PORT, console.log('PORT', PORT));
