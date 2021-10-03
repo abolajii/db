@@ -10,6 +10,13 @@ const app = express();
 
 const PORT = process.env.PORT || 3009;
 
+app.use((req, res, next) => {
+	console.log('req.headers.origin', req.headers.origin);
+	console.log('req.headers.host', req.headers.host);
+
+	next();
+});
+
 var allowedDomains = [
 	process.env.O1,
 	process.env.O2,
