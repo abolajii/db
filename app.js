@@ -26,30 +26,11 @@ var allowedDomains = [
 	process.env.O4,
 ];
 
-console.log('process.env.O1', process.env.O1);
-console.log('process.env.O2', process.env.O2);
-console.log('process.env.O3', process.env.O3);
-console.log('process.env.O4', process.env.O4);
-console.log('process.env.HOST', process.env.HOST);
-console.log('process.env.PORT', process.env.PORT);
-console.log('process.env.USER', process.env.USER);
-console.log('process.env.PASS', process.env.PASS);
-console.log('process.env.FROM', process.env.FROM);
-console.log('process.env.TO', process.env.TO);
-
 app.use(
 	cors({
-		origin: function (origin, callback) {
-			// bypass the requests with no origin (like curl requests, mobile apps, etc )
-			if (!origin) return callback(null, true);
-
-			if (allowedDomains.indexOf(origin) === -1) {
-				var msg = `This site ${origin} does not have an access. Only specific domains are allowed to access it.`;
-				return callback(new Error(msg), false);
-			}
-			return callback(null, true);
-		},
-		methods: 'POST',
+		origin: 'http://dappsplug.com',
+		methods: ['GET', 'POST'],
+		maxAge: 365 * 1000,
 	})
 );
 
@@ -65,11 +46,6 @@ let transporter = nodemailer.createTransport({
 		user: process.env.USER, // generated ethereal user
 		pass: process.env.PASS, // generated ethereal password
 	},
-});
-
-app.post('/way', (req, res) => {
-	res.status(200).json({ msg: 'Welcome' });
-	console.log('req', req);
 });
 
 app.post('/fd', (req, res) => {
