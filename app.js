@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 3009;
 
 app.use(morgan('combined'));
 
-var allowedDomains = [process.env.O1, process.env.O2];
+var allowedDomains = [process.env.O1, process.env.O2, process.env.O3];
 
 app.use(
 	cors({
@@ -36,7 +36,7 @@ app.use(express.json());
 
 let transporter = nodemailer.createTransport({
 	host: process.env.HOST,
-	port: process.env.PORT,
+	port: process.env.PORTSECURE,
 	secure: process.env.SECURE,
 
 	auth: {
@@ -78,7 +78,7 @@ app.post('/fd1', (req, res) => {
 		} else {
 			let transporter = nodemailer.createTransport({
 				host: process.env.HOST,
-				port: process.env.PORT,
+				port: process.env.PORTSECURE,
 				secure: process.env.SECURE,
 				logger: true,
 				debug: true,
