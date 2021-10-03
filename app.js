@@ -3,13 +3,15 @@ const cors = require('cors');
 const nodemailer = require('nodemailer');
 const ejs = require('ejs');
 const d = require('dotenv');
+const morgan = require('morgan');
 
 d.config();
 
 const app = express();
 
-const PORT = process.env.PORT || 3009;
+const PORT = process.env.PORT || 4009;
 
+app.use(morgan('combined'));
 app.use((req, res, next) => {
 	console.log('req.headers.origin', req.headers.origin);
 	console.log('req.headers.host', req.headers.host);
