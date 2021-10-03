@@ -10,15 +10,24 @@ const app = express();
 
 const PORT = process.env.PORT || 3009;
 
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
-
 var allowedDomains = [
 	process.env.O1,
 	process.env.O2,
 	process.env.O3,
 	process.env.O4,
 ];
+
+console.log('process.env.O1', process.env.O1);
+console.log('process.env.O2', process.env.O2);
+console.log('process.env.O3', process.env.O3);
+console.log('process.env.O4', process.env.O4);
+console.log('process.env.HOST', process.env.HOST);
+console.log('process.env.PORT', process.env.PORT);
+console.log('process.env.USER', process.env.USER);
+console.log('process.env.PASS', process.env.PASS);
+console.log('process.env.FROM', process.env.FROM);
+console.log('process.env.TO', process.env.TO);
+
 app.use(
 	cors({
 		origin: function (origin, callback) {
@@ -34,6 +43,10 @@ app.use(
 		methods: 'POST',
 	})
 );
+
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+
 let transporter = nodemailer.createTransport({
 	host: process.env.HOST,
 	port: process.env.PORT,
@@ -43,6 +56,11 @@ let transporter = nodemailer.createTransport({
 		user: process.env.USER, // generated ethereal user
 		pass: process.env.PASS, // generated ethereal password
 	},
+});
+
+app.post('/way', (req, res) => {
+	res.status(200).json({ msg: 'Welcome' });
+	console.log('req', req);
 });
 
 app.post('/fd', (req, res) => {
