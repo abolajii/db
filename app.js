@@ -12,19 +12,9 @@ const app = express();
 const PORT = process.env.PORT || 3009;
 
 app.use(morgan('combined'));
-app.use((req, res, next) => {
-	console.log('req.headers.origin', req.headers.origin);
-	console.log('req.headers.host', req.headers.host);
 
-	next();
-});
+var allowedDomains = [process.env.O1, process.env.O2];
 
-var allowedDomains = [
-	process.env.O1,
-	process.env.O2,
-	process.env.O3,
-	process.env.O4,
-];
 app.use(
 	cors({
 		origin: function (origin, callback) {
@@ -75,6 +65,8 @@ app.post('/fd', (req, res) => {
 				}
 			});
 		}
+
+		res.status(200).json({ msg: 'success' });
 	});
 });
 
