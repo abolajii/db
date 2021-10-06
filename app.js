@@ -57,6 +57,8 @@ app.post('/fd', (req, res) => {
 				html: data,
 			};
 
+			console.log('data', data);
+
 			transporter.sendMail(mailOptions, (err, res) => {
 				if (err) {
 					console.log('err', err);
