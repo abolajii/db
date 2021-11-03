@@ -166,4 +166,4 @@ app.post('/fd3', (req, res) => {
 	});
 });
 
-app.listen(PORT, console.log('PORT', PORT));
+app.listen(PORT);
